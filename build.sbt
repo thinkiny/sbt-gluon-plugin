@@ -1,12 +1,12 @@
 name := "sbt-gluon-plugin"
 organization := "io.github.thinkiny"
-version := "0.1.0"
+version := "0.1.1"
 scalaVersion := "2.12.19"
 
 resolvers += "Gluon Snapshots" at "https://nexus.gluonhq.com/nexus/content/repositories/public-snapshots"
 resolvers += "Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-enablePlugins(SbtPlugin)
+enablePlugins(SbtPlugin, AssemblyPlugin)
 
 libraryDependencies += "com.gluonhq" % "substrate" % "0.0.62-SNAPSHOT"
 

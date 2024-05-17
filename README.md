@@ -12,7 +12,7 @@ To use the plugin, apply the following steps:
 
 Edit your project/plugins.bt file and add the plugin:
 
-    addSbtPlugin("com.github.thinkiny" % "sbt-gluon-plugin" % "0.1.0")
+    addSbtPlugin("com.github.thinkiny" % "sbt-gluon-plugin" % "0.1.1")
 
 The plugin allows some options that can be set in `configuration`, to modify the default settings, and several goals, to build and run the native application.
 Don't forget to set up `GRAALVM_PATH` environment.
