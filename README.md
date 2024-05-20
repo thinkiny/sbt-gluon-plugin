@@ -10,9 +10,13 @@ To use the plugin, apply the following steps:
 
 ### 1. Apply the plugin
 
+
+Notice: You should add resolves because of dependency
+    resolvers += "Sonatype" at "https://oss.sonatype.org/content/repositories/public"
+
 Edit your project/plugins.bt file and add the plugin:
 
-    addSbtPlugin("com.github.thinkiny" % "sbt-gluon-plugin" % "0.1.1")
+    addSbtPlugin("com.github.thinkiny" % "sbt-gluon-plugin" % "0.2.1")
 
 The plugin allows some options that can be set in `configuration`, to modify the default settings, and several goals, to build and run the native application.
 Don't forget to set up `GRAALVM_PATH` environment.

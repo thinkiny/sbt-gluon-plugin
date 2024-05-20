@@ -72,6 +72,9 @@ object ClientPlugin extends AutoPlugin {
       require(code == 0, "run agent failed")
     },
     gluonBuild := Def.sequential(gluonCompile, gluonLink).value,
-    nativeImageArgs := Seq.empty
+    nativeImageArgs := Seq(
+      "--no-fallback",
+      "-H:ConfigurationFileDirectories=../../../native-agent"
+    )
   )
 }

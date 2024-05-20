@@ -2,7 +2,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 name := "sbt-gluon-plugin"
 organization := "io.github.thinkiny"
-version := "0.2.0"
+version := "0.2.1"
 resolvers += "Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 enablePlugins(SbtPlugin)
