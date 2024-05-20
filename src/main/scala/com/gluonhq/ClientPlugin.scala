@@ -10,6 +10,7 @@ import sbt.{Def, _}
 
 import scala.collection.JavaConverters._
 import com.gluonhq.substrate.util.Strings
+import sbtassembly.AssemblyKeys
 
 object ClientPlugin extends AutoPlugin {
   val defaultJavaStaticSdkVersion = "18-ea+prep18-9"
@@ -64,17 +65,13 @@ object ClientPlugin extends AutoPlugin {
       val result = dispatcher.nativeLink()
       require(result, "Linking failed.")
     },
-    gluonBuild := Def
-      .sequential(gluonCompile, gluonLink)
-      .value,
-    javaFxOsName := {
-      System.getProperty("os.name") match {
-        case n if n.startsWith("Linux")   => "linux"
-        case n if n.startsWith("Mac")     => "mac"
-        case n if n.startsWith("Windows") => "win"
-        case _ => throw new Exception("Unknown platform!")
-      }
+    gluonRunAgent := {
+      val javaPath = System.getenv("GRAALVM_HOME") + "/bin/java"
+      val code =
+        RunAgent.run(javaPath, AssemblyKeys.assembly.value, baseDirectory.value)
+      require(code == 0, "run agent failed")
     },
+    gluonBuild := Def.sequential(gluonCompile, gluonLink).value,
     nativeImageArgs := Seq.empty
   )
 }

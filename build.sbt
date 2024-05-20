@@ -1,19 +1,20 @@
+Global / onChangedBuildSource := ReloadOnSourceChanges
+
 name := "sbt-gluon-plugin"
 organization := "io.github.thinkiny"
-version := "0.1.1"
-scalaVersion := "2.12.19"
-
-resolvers += "Gluon Snapshots" at "https://nexus.gluonhq.com/nexus/content/repositories/public-snapshots"
+version := "0.2.0"
 resolvers += "Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-enablePlugins(SbtPlugin, AssemblyPlugin)
+enablePlugins(SbtPlugin)
 
 libraryDependencies += "com.gluonhq" % "substrate" % "0.0.62-SNAPSHOT"
 
-// publish
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "2.2.0")
+
 homepage := Some(url("https://github.com/thinkiny/sbt-gluon-plugin"))
 description := "Gluon Client plugin for SBT"
 versionScheme := Some("early-semver")
+
 scmInfo := Some(
   ScmInfo(
     url("https://github.com/thinkiny/sbt-gluon-plugin"),
@@ -33,3 +34,7 @@ developers := List(
     url = url("https://github.com/thinkiny/sbt-gluon-plugin")
   )
 )
+
+sonatypeCredentialHost := Sonatype.sonatypeCentralHost
+publishTo := sonatypePublishToBundle.value
+publishMavenStyle := true
