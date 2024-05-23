@@ -9,11 +9,6 @@ import scala.sys.process.Process
 import java.nio.file.Path
 
 object RunAgent {
-  val agentDir = "native-agent"
-  val agentFilter = s"${agentDir}/filter-file.json"
-  val NATIVE_IMAGE_AGENT_STRING =
-    s"-agentlib:native-image-agent=access-filter-file=${agentDir}/filter-file.json,config-merge-dir=${agentDir}";
-
   val AGENTLIB_EXCLUSION_RULES = List(
     "com.sun.glass.ui.mac.*",
     "com.sun.glass.ui.gtk.*",
@@ -25,7 +20,8 @@ object RunAgent {
     "com.gluonhq.attach.**"
   )
 
-  def createFilterFile(): Unit = {
+  def createFilterFile(agentDir: String): Unit = {
+    val agentFilter = s"${agentDir}/filter-file.json"
     val agentDirFilter = new File(agentFilter)
     if (agentDirFilter.exists()) {
       agentDirFilter.delete()
@@ -51,14 +47,16 @@ object RunAgent {
     }
   }
 
-  def run(javaPath: String, jar: File, baseDir: File): Int = {
+  def run(javaPath: String, jar: File, baseDir: File, agentDir: String): Int = {
+    val nativeImageAgentArgs =
+      s"-agentlib:native-image-agent=access-filter-file=${agentDir}/filter-file.json,config-merge-dir=${agentDir}";
     val agentDirFile = new File(agentDir)
     if (!agentDirFile.exists()) {
       agentDirFile.mkdirs()
     }
-    createFilterFile()
+    createFilterFile(agentDir)
     Process(
-      s"${javaPath} ${NATIVE_IMAGE_AGENT_STRING} -jar ${jar}",
+      s"${javaPath} ${nativeImageAgentArgs} -jar ${jar}",
       cwd = baseDir
     ).!
   }

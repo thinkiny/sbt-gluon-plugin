@@ -12,7 +12,7 @@ import scala.collection.JavaConverters._
 import com.gluonhq.substrate.util.Strings
 import sbtassembly.AssemblyKeys
 
-object ClientPlugin extends AutoPlugin {
+object GluonPlugin extends AutoPlugin {
   val defaultJavaStaticSdkVersion = "18-ea+prep18-9"
   val defaultJavafxStaticSdkVersion = "21-ea+11.2"
 
@@ -68,13 +68,19 @@ object ClientPlugin extends AutoPlugin {
     gluonRunAgent := {
       val javaPath = System.getenv("GRAALVM_HOME") + "/bin/java"
       val code =
-        RunAgent.run(javaPath, AssemblyKeys.assembly.value, baseDirectory.value)
+        RunAgent.run(
+          javaPath,
+          AssemblyKeys.assembly.value,
+          baseDirectory.value,
+          nativeAgentDir.value
+        )
       require(code == 0, "run agent failed")
     },
     gluonBuild := Def.sequential(gluonCompile, gluonLink).value,
     nativeImageArgs := Seq(
       "--no-fallback",
       "-H:ConfigurationFileDirectories=../../../native-agent"
-    )
+    ),
+    nativeAgentDir := "native-agent"
   )
 }
