@@ -11,6 +11,7 @@ import sbt.{Def, _}
 import scala.collection.JavaConverters._
 import com.gluonhq.substrate.util.Strings
 import sbtassembly.AssemblyKeys
+import com.gluonhq.substrate.model.ReleaseConfiguration
 
 object GluonPlugin extends AutoPlugin {
   val defaultJavaStaticSdkVersion = "18-ea+prep18-9"
@@ -44,26 +45,39 @@ object GluonPlugin extends AutoPlugin {
     )
     clientConfig.setAppId(organization.value + "." + name.value)
     clientConfig.setAppName(name.value)
-    clientConfig.setVerbose(true)
     clientConfig.setUsePrecompiledCode(true)
     clientConfig.setCompilerArgs(nativeImageArgs.value.asJava)
     clientConfig.setJavaStaticSdkVersion(defaultJavaStaticSdkVersion)
     clientConfig.setJavafxStaticSdkVersion(defaultJavafxStaticSdkVersion)
+
+    val releaseConfig = clientConfig.getReleaseConfiguration()
+    releaseConfig.setMacAppStore(macAppStore.value)
+    releaseConfig.setMacAppCategory(macAppCategory.value)
+    if (!macAppStore.value) {
+      releaseConfig.setSkipSigning(true)
+    }
+    releaseConfig.setMacSigningUserName(macSigningUserName.value)
     clientConfig
   }
 
   override val projectSettings = Seq(
     gluonCompile := {
-      val directory = baseDirectory.value.toPath
+      val directory = target.value.toPath.resolve("gluon")
       val dispatcher = new SubstrateDispatcher(directory, clientConfig().value)
       val result = dispatcher.nativeCompile()
       require(result, "Compilation failed.")
     },
     gluonLink := {
-      val directory = baseDirectory.value.toPath
+      val directory = target.value.toPath.resolve("gluon")
       val dispatcher = new SubstrateDispatcher(directory, clientConfig().value)
       val result = dispatcher.nativeLink()
       require(result, "Linking failed.")
+    },
+    gluonPackage := {
+      val directory = target.value.toPath.resolve("gluon")
+      val dispatcher = new SubstrateDispatcher(directory, clientConfig().value)
+      val result = dispatcher.nativePackage()
+      require(result, "Package failed.")
     },
     gluonRunAgent := {
       val javaPath = System.getenv("GRAALVM_HOME") + "/bin/java"
@@ -74,13 +88,16 @@ object GluonPlugin extends AutoPlugin {
           baseDirectory.value,
           nativeAgentDir.value
         )
-      require(code == 0, "run agent failed")
+      require(code == 0, "Run agent failed")
     },
     gluonBuild := Def.sequential(gluonCompile, gluonLink).value,
     nativeImageArgs := Seq(
       "--no-fallback",
-      "-H:ConfigurationFileDirectories=../../../native-agent"
+      "-H:ConfigurationFileDirectories=../../../../../native-agent"
     ),
-    nativeAgentDir := "native-agent"
+    nativeAgentDir := "native-agent",
+    macAppStore := false,
+    macSigningUserName := "",
+    macAppCategory := ReleaseConfiguration.DEFAULT_MAC_APP_CATEGORY
   )
 }
