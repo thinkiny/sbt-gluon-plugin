@@ -17,7 +17,7 @@ Notice: You should add resolves because of dependency
 
 Edit your project/plugins.bt file and add the plugin:
 
-    addSbtPlugin("io.github.thinkiny" % "sbt-gluon-plugin" % "0.3.0")
+    addSbtPlugin("io.github.thinkiny" % "sbt-gluon-plugin" % "0.3.2")
 
 The plugin allows some options that can be set in `configuration`, to modify the default settings, and several goals, to build and run the native application.
 Don't forget to set up `GRAALVM_PATH` environment.
@@ -27,6 +27,9 @@ Don't forget to set up `GRAALVM_PATH` environment.
 Once the project is ready, the Gluon plugin has these main goals:
 
 #### `gluonPackage`
+
+This goal does the packing.
+
 #### `gluonBuild`
 
 This goal does the AOT compilation. It is a very intensive and lengthy task (several minutes, depending on your project and CPU), so it should be called only when the project is ready and runs fine on a VM.

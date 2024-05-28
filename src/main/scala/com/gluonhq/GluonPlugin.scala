@@ -21,7 +21,7 @@ object GluonPlugin extends AutoPlugin {
 
   import autoImport._
 
-  def clientConfig(): Def.Initialize[Task[ProjectConfiguration]] = Def.task {
+  def makeDispatcher(): Def.Initialize[Task[SubstrateDispatcher]] = Def.task {
     val mainClassValue = (Compile / mainClass).value.get
     val classPath = (Compile / fullClasspath).value
       .map(_.data)
@@ -44,8 +44,9 @@ object GluonPlugin extends AutoPlugin {
       Strings.split(System.getProperty("bundleslist"))
     )
     clientConfig.setAppId(organization.value + "." + name.value)
-    clientConfig.setAppName(name.value)
+    clientConfig.setAppName(gluonAppName.value)
     clientConfig.setUsePrecompiledCode(true)
+    clientConfig.setVerbose(gluonVerbose.value)
     clientConfig.setCompilerArgs(nativeImageArgs.value.asJava)
     clientConfig.setJavaStaticSdkVersion(defaultJavaStaticSdkVersion)
     clientConfig.setJavafxStaticSdkVersion(defaultJavafxStaticSdkVersion)
@@ -57,25 +58,23 @@ object GluonPlugin extends AutoPlugin {
       releaseConfig.setSkipSigning(true)
     }
     releaseConfig.setMacSigningUserName(macSigningUserName.value)
-    clientConfig
+    val directory = target.value.toPath.resolve("gluon")
+    new SubstrateDispatcher(directory, clientConfig)
   }
 
   override val projectSettings = Seq(
     gluonCompile := {
-      val directory = target.value.toPath.resolve("gluon")
-      val dispatcher = new SubstrateDispatcher(directory, clientConfig().value)
+      val dispatcher = makeDispatcher.value
       val result = dispatcher.nativeCompile()
       require(result, "Compilation failed.")
     },
     gluonLink := {
-      val directory = target.value.toPath.resolve("gluon")
-      val dispatcher = new SubstrateDispatcher(directory, clientConfig().value)
+      val dispatcher = makeDispatcher.value
       val result = dispatcher.nativeLink()
       require(result, "Linking failed.")
     },
     gluonPackage := {
-      val directory = target.value.toPath.resolve("gluon")
-      val dispatcher = new SubstrateDispatcher(directory, clientConfig().value)
+      val dispatcher = makeDispatcher.value
       val result = dispatcher.nativePackage()
       require(result, "Package failed.")
     },
@@ -96,8 +95,10 @@ object GluonPlugin extends AutoPlugin {
       "-H:ConfigurationFileDirectories=../../../../../native-agent"
     ),
     nativeAgentDir := "native-agent",
+    gluonVerbose := false,
     macAppStore := false,
     macSigningUserName := "",
-    macAppCategory := ReleaseConfiguration.DEFAULT_MAC_APP_CATEGORY
+    macAppCategory := ReleaseConfiguration.DEFAULT_MAC_APP_CATEGORY,
+    gluonAppName := name.value
   )
 }
