@@ -14,8 +14,8 @@ import sbtassembly.AssemblyKeys
 import com.gluonhq.substrate.model.ReleaseConfiguration
 
 object GluonPlugin extends AutoPlugin {
-  val defaultJavaStaticSdkVersion = "18-ea+prep18-9"
-  val defaultJavafxStaticSdkVersion = "21-ea+11.2"
+  val defaultJavaStaticSdkVersion = "24-1"
+  val defaultJavafxStaticSdkVersion = "24-ea+7.1"
 
   object autoImport extends GluonTasks with GluonKeys {}
 
@@ -90,8 +90,10 @@ object GluonPlugin extends AutoPlugin {
       require(code == 0, "Run agent failed")
     },
     gluonBuild := Def.sequential(gluonCompile, gluonLink).value,
+    gluonRepackage := Def.sequential(gluonBuild, gluonPackage).value,
     nativeImageArgs := Seq(
       "--no-fallback",
+      "-Djava.awt.headless=false",
       "-H:ConfigurationFileDirectories=../../../../../native-agent"
     ),
     nativeAgentDir := "native-agent",

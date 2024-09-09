@@ -2,12 +2,12 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 name := "sbt-gluon-plugin"
 organization := "io.github.thinkiny"
-version := "0.3.2"
+version := "0.3.4"
 resolvers += "Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 enablePlugins(SbtPlugin)
 
-libraryDependencies += "com.gluonhq" % "substrate" % "0.0.62-SNAPSHOT"
+libraryDependencies += "com.gluonhq" % "substrate" % "0.0.63"
 
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "2.2.0")
 
