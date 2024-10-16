@@ -48,6 +48,7 @@ object GluonPlugin extends AutoPlugin {
     clientConfig.setUsePrecompiledCode(true)
     clientConfig.setVerbose(gluonVerbose.value)
     clientConfig.setCompilerArgs(nativeImageArgs.value.asJava)
+    clientConfig.setLinkerArgs(nativeLinkerArgs.value.asJava)
     clientConfig.setJavaStaticSdkVersion(defaultJavaStaticSdkVersion)
     clientConfig.setJavafxStaticSdkVersion(defaultJavafxStaticSdkVersion)
 
@@ -91,6 +92,7 @@ object GluonPlugin extends AutoPlugin {
     },
     gluonBuild := Def.sequential(gluonCompile, gluonLink).value,
     gluonRepackage := Def.sequential(gluonBuild, gluonPackage).value,
+    nativeLinkerArgs := Seq(),
     nativeImageArgs := Seq(
       "--no-fallback",
       "-Djava.awt.headless=false",

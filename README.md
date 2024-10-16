@@ -17,7 +17,7 @@ Notice: You should add resolves because of dependency
 
 Edit your project/plugins.bt file and add the plugin:
 
-    addSbtPlugin("io.github.thinkiny" % "sbt-gluon-plugin" % "0.3.4")
+    addSbtPlugin("io.github.thinkiny" % "sbt-gluon-plugin" % "0.3.5")
 
 The plugin allows some options that can be set in `configuration`, to modify the default settings, and several goals, to build and run the native application.
 Don't forget to set up `GRAALVM_PATH` environment.

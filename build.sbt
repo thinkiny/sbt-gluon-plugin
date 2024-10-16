@@ -1,8 +1,11 @@
+import xerial.sbt.Sonatype.sonatypeCentralHost
+
+ThisBuild / sonatypeCredentialHost := sonatypeCentralHost
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 name := "sbt-gluon-plugin"
 organization := "io.github.thinkiny"
-version := "0.3.4"
+version := "0.3.5"
 resolvers += "Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 enablePlugins(SbtPlugin)
@@ -35,6 +38,5 @@ developers := List(
   )
 )
 
-sonatypeCredentialHost := Sonatype.sonatypeCentralHost
 publishTo := sonatypePublishToBundle.value
 publishMavenStyle := true
